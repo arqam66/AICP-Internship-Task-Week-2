@@ -1,0 +1,83 @@
+# Initialize data structures
+journeys_up = [0, 0, 0, 0]  # Total passengers for each journey up
+journeys_down = [0, 0, 0, 0]  # Total passengers for each journey down
+revenue_up = [0, 0, 0, 0]  # Total money taken for each journey up
+revenue_down = [0, 0, 0, 0]  # Total money taken for each journey down
+
+# Function to display the screen
+def display_screen():
+    print("\nTrain Schedule:")
+    for i in range(4):
+        print(f"Train {i + 1} Up: {80 - journeys_up[i]} tickets available | "
+              f"Train {i + 1} Down: {80 - journeys_down[i]} tickets available")
+    print()
+
+# Function to check ticket availability
+def check_availability(journey_type, journey_index, num_tickets):
+    if journey_type == "up":
+        return journeys_up[journey_index] + num_tickets <= 80
+    elif journey_type == "down":
+        return journeys_down[journey_index] + num_tickets <= 80
+
+# Function to calculate the total price
+def calculate_price(journey_type, journey_index, num_tickets):
+    ticket_price = 25
+    total_price = num_tickets * ticket_price
+
+    # Check for group discount
+    if num_tickets >= 10:
+        free_tickets = num_tickets // 10
+        total_price -= free_tickets * ticket_price
+
+    return total_price
+
+# Function to update totals
+def update_totals(journey_type, journey_index, num_tickets, total_price):
+    if journey_type == "up":
+        journeys_up[journey_index] += num_tickets
+        revenue_up[journey_index] += total_price
+    elif journey_type == "down":
+        journeys_down[journey_index] += num_tickets
+        revenue_down[journey_index] += total_price
+
+# Function to purchase tickets
+def purchase_tickets():
+    print("\nTicket Purchase:")
+    
+    # Get user input
+    journey_type = input("Enter 'up' for Up journey or 'down' for Down journey: ").lower()
+    journey_index = int(input("Enter the journey index (1 to 4): ")) - 1
+    num_tickets = int(input("Enter the number of tickets to purchase: "))
+    
+    if check_availability(journey_type, journey_index, num_tickets):
+        total_price = calculate_price(journey_type, journey_index, num_tickets)
+        update_totals(journey_type, journey_index, num_tickets, total_price)
+        display_screen()
+        print(f"Tickets purchased successfully. Total Price: ${total_price}")
+    else:
+        display_screen()
+        print("Tickets not available. Please choose a different number of tickets.")
+
+# Function for end-of-day summary
+def display_end_of_day_summary():
+    total_passengers = sum(journeys_up) + sum(journeys_down)
+    total_revenue = sum(revenue_up) + sum(revenue_down)
+
+    print("\nEnd of the Day Summary:")
+    print(f"Total Passengers: {total_passengers}")
+    print(f"Total Revenue: ${total_revenue}")
+
+    max_passengers_up = max(journeys_up)
+    max_passengers_up_index = journeys_up.index(max_passengers_up)
+    print(f"Train Journey with Most Passengers (Up): Train {max_passengers_up_index + 1}, Passengers: {max_passengers_up}")
+
+# Start of the day
+print("\nStart of the Day:")
+display_screen()
+
+# Example usage - Purchasing tickets
+purchase_tickets()
+purchase_tickets()
+
+# End of the day summary
+display_end_of_day_summary()
